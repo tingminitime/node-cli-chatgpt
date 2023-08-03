@@ -28,3 +28,4 @@
 
 - [適用于 JavaScript 的 Azure OpenAI 用戶端程式庫 - 1.0.0-Beta.3 版](https://learn.microsoft.com/zh-tw/javascript/api/overview/azure/openai-readme?view=azure-node-preview)
 - [Stackoverflow - OpenAI Completion Stream with Node.js and Express.js](https://stackoverflow.com/questions/76137987/openai-completion-stream-with-node-js-and-express-js)
+- [使用 nodejs openai 原生库，调用 Azure OpenAI 服务](https://www.jianshu.com/p/18e97d23c7fa)
