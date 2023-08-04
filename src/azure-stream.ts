@@ -38,21 +38,30 @@ const main = async function () {
 
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME!
 
-    /* Without stream */
-    const chatCompletion = await client.getChatCompletions(
+    /* With stream */
+    let finalAnswer = ''
+    const chatCompletions = await client.listChatCompletions(
       deploymentName,
       messages,
     )
 
-    const answer = chatCompletion.choices[0].message?.content
-    console.log(`${chalk.green.bold('AI:')} ${answer}`)
+    process.stdout.write(chalk.green.bold('AI: '))
+    for await (const chatCompletion of chatCompletions) {
+      for (const choice of chatCompletion.choices) {
+        const chunk: undefined | string = choice.delta?.content
+        process.stdout.write(chunk || '')
+        finalAnswer += chunk || ''
+      }
+    }
 
-    messages.push({
-      role: 'assistant',
-      content: answer!,
-    })
-    // continue to next Q/A
-    main()
+    setTimeout(() => {
+      console.log('\n[Stream done]')
+      messages.push({
+        role: 'assistant',
+        content: finalAnswer,
+      })
+      main()
+    }, 10)
   } catch (error) {
     console.error('[main]error: ', error)
   }

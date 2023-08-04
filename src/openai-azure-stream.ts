@@ -3,6 +3,7 @@ import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import { input } from '@inquirer/prompts'
 import chalk from 'chalk'
+import { IncomingMessage } from 'http'
 import type Message from './types/message'
 
 dotenv.config()
@@ -39,7 +40,7 @@ const main = async function () {
       content: userInput,
     })
 
-    /* Without stream */
+    /* With stream */
     const chatCompletion = await openAI.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
@@ -55,15 +56,38 @@ const main = async function () {
       },
     )
 
-    const answer = chatCompletion.data.choices[0].message?.content
-    console.log(chalk.green('AI: '), answer)
+    const stream = chatCompletion.data as unknown as IncomingMessage
+    let finalAnswer = ''
 
-    messages.push({
-      role: 'assistant',
-      content: answer!,
+    process.stdout.write(chalk.green.bold('AI: '))
+    stream.on('data', (chunk: Buffer) => {
+      const payloads = chunk.toString().split('\n\n')
+      for (const payload of payloads) {
+        if (payload.includes('[DONE]')) return
+        if (payload.startsWith('data:')) {
+          const data = JSON.parse(payload.replace('data: ', ''))
+          try {
+            const chunk: undefined | string = data.choices[0].delta?.content
+            process.stdout.write(chunk || '')
+            finalAnswer += chunk || ''
+          } catch (error) {
+            console.log(`Error with JSON.parse and ${payload}: `, error)
+          }
+        }
+      }
     })
-    // continue to next Q/A
-    main()
+
+    stream.on('end', () => {
+      setTimeout(() => {
+        console.log('\n[Stream done]')
+        messages.push({
+          role: 'assistant',
+          content: finalAnswer,
+        })
+        // continue to next Q/A
+        main()
+      }, 10)
+    })
   } catch (error) {
     console.log('[main]error: ', error)
   }
