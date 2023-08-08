@@ -1,10 +1,10 @@
-console.log('[OpenAI]cbot Start !')
+console.log('[OpenAI Azure Stream]cbot Start !')
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import { input } from '@inquirer/prompts'
 import chalk from 'chalk'
 import { IncomingMessage } from 'http'
-import type Message from './types/message'
+import type Message from './types/message.js'
 
 dotenv.config()
 
@@ -24,6 +24,7 @@ const messages: Message[] = [
   },
 ]
 
+// TODO : 目前 API 會報錯
 const main = async function () {
   try {
     const userInput = await input({

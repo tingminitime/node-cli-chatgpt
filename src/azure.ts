@@ -1,59 +1,40 @@
 console.log('[Azure OpenAI]cbot Start !')
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import dotenv from 'dotenv'
-import { input } from '@inquirer/prompts'
 import chalk from 'chalk'
-import type Message from './types/message'
+import { userInputHandler } from './utils/userInput.js'
+import useOraLoading from './utils/loading.js'
+import messageHandler from './utils/messageHandler.js'
+import { useAzureOpenAI } from './utils/chatCompletion.js'
 
 dotenv.config()
 
-const client = new OpenAIClient(
-  process.env.AZURE_OPENAI_API_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!),
-)
-
-const messages: Message[] = [
-  {
-    role: 'system',
-    content:
-      '你是一位懂中文且有用的 AI 助手，接下來請你以「繁體中文」與我對話。',
-  },
-]
+const { messageHistory, addMessage } = messageHandler()
+const { startLoading, succeedLoading, failLoading } = useOraLoading()
+const { createChatCompletion } = useAzureOpenAI()
 
 const main = async function () {
   try {
-    const userInput = await input({
-      message: chalk.blue('You: '),
-    })
+    const { userInput, isInputExit } = await userInputHandler()
 
-    if (userInput === 'exit') {
+    if (isInputExit) {
       console.log('Bye bye !')
       process.exit(0)
     }
 
-    messages.push({
-      role: 'user',
-      content: userInput,
-    })
-
-    const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME!
+    const messages = addMessage(messageHistory, 'user', userInput)
 
     /* Without stream */
-    const chatCompletion = await client.getChatCompletions(
-      deploymentName,
-      messages,
-    )
+    startLoading()
+    const answer = await createChatCompletion(messages)
+    succeedLoading()
 
-    const answer = chatCompletion.choices[0].message?.content
     console.log(`${chalk.green.bold('AI:')} ${answer}`)
 
-    messages.push({
-      role: 'assistant',
-      content: answer!,
-    })
+    addMessage(messages, 'assistant', answer!)
     // continue to next Q/A
     main()
   } catch (error) {
+    failLoading()
     console.error('[main]error: ', error)
   }
 }

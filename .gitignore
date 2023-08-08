@@ -131,3 +131,6 @@ dist
 
 # Envinronment variables
 .env
+
+# Logs
+logs/

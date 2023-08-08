@@ -15,9 +15,9 @@
 
 - openai
 - @azure/openai
-- inquirer.js
+- @inquirer/prompts
 - dotenv
-- colors
+- chalk
 - ora
 - rollup
 - typescript

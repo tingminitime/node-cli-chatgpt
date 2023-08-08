@@ -38,6 +38,11 @@ const answer = await select({
       value: `${tsNodeEsm} ./src/azure-stream.ts`,
       description: 'Run Azure API with stream',
     },
+    {
+      name: 'azure:stream-loop',
+      value: `${tsNodeEsm} ./src/azure-stream-loop.ts`,
+      description: 'Run Azure API with loop stream',
+    },
   ],
 })
 

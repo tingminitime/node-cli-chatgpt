@@ -2,18 +2,16 @@ console.log('[OpenAI]cbot Start !')
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
-import { userInputHandler } from './utils/userInput'
-import messageHandler from './utils/messageHandler'
+import { userInputHandler } from './utils/userInput.js'
+import useOraLoading from './utils/loading.js'
+import messageHandler from './utils/messageHandler.js'
+import { useOpenAI } from './utils/chatCompletion.js'
 
 dotenv.config()
 
-const openAI = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  }),
-)
-
-const { initMessages, addMessage } = messageHandler()
+const { messageHistory, addMessage } = messageHandler()
+const { startLoading, succeedLoading, failLoading } = useOraLoading()
+const { createChatCompletion } = useOpenAI()
 
 const main = async function () {
   try {
@@ -24,22 +22,20 @@ const main = async function () {
       process.exit(0)
     }
 
-    const messages = addMessage(initMessages, 'user', userInput)
-
-    const chatCompletion = await openAI.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages,
-    })
+    const messages = addMessage(messageHistory, 'user', userInput)
 
     /* Without stream */
-    const answer = chatCompletion.data.choices[0].message?.content
+    startLoading()
+    const answer = await createChatCompletion(messages)
+    succeedLoading()
+
     console.log(chalk.green.bold('AI: '), answer)
 
-    messages.push({
-      role: 'assistant',
-      content: answer!,
-    })
+    addMessage(messages, 'assistant', answer!)
+    // continue to next Q/A
+    main()
   } catch (error) {
+    failLoading()
     console.log('[main]error: ', error)
   }
 }

@@ -1,12 +1,16 @@
-console.log('[OpenAI]cbot Start !')
+console.log('[OpenAI Stream]cbot Start !')
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
-import { input } from '@inquirer/prompts'
 import chalk from 'chalk'
 import { IncomingMessage } from 'http'
-import type Message from './types/message'
+import { userInputHandler } from './utils/userInput.js'
+import messageHandler from './utils/messageHandler.js'
+import useOraLoading from './utils/loading.js'
 
 dotenv.config()
+
+const { messageHistory, addMessage } = messageHandler()
+const { startLoading, succeedLoading, failLoading } = useOraLoading()
 
 const openAI = new OpenAIApi(
   new Configuration({
@@ -14,30 +18,19 @@ const openAI = new OpenAIApi(
   }),
 )
 
-const messages: Message[] = [
-  {
-    role: 'system',
-    content:
-      '你是一位懂中文且有用的 AI 助手，接下來請你以「繁體中文」與我對話。',
-  },
-]
-
 const main = async function () {
   try {
-    const userInput = await input({
-      message: chalk.blue('You: '),
-    })
+    const { userInput, isInputExit } = await userInputHandler()
 
-    if (userInput === 'exit') {
+    if (isInputExit) {
       console.log('Bye bye !')
       process.exit(0)
     }
 
-    messages.push({
-      role: 'user',
-      content: userInput,
-    })
+    const messages = addMessage(messageHistory, 'user', userInput)
 
+    /* With stream */
+    startLoading()
     const chatCompletion = await openAI.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
@@ -48,9 +41,10 @@ const main = async function () {
         responseType: 'stream', // if stream is true, responseType must be stream
       },
     )
+    succeedLoading()
 
-    /* With stream */
     const stream = chatCompletion.data as unknown as IncomingMessage
+
     let finalAnswer = ''
 
     process.stdout.write(chalk.green.bold('AI: '))
@@ -74,15 +68,13 @@ const main = async function () {
     stream.on('end', () => {
       setTimeout(() => {
         console.log('\n[Stream done]')
-        messages.push({
-          role: 'assistant',
-          content: finalAnswer,
-        })
+        addMessage(messages, 'assistant', finalAnswer)
         // continue to next Q/A
         main()
       }, 10)
     })
   } catch (error) {
+    failLoading()
     console.log('[main]error: ', error)
   }
 }

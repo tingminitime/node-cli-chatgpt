@@ -1,9 +1,10 @@
 {
-  "name": "cli-cbot",
+  "name": "node-cli-chatgpt",
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.js",
   "type": "module",
+  "bin": "./dist/bundle.ts",
   "scripts": {
     "start": "ts-node-esm ./src/index.ts",
     "openai": "ts-node-esm ./src/openai.ts",
@@ -11,7 +12,8 @@
     "openai:stream": "ts-node-esm ./src/openai-stream.ts",
     "openai-azure:stream": "ts-node-esm ./src/openai-azure-stream.ts",
     "azure": "ts-node-esm ./src/azure.ts",
-    "azure:steram": "ts-node-esm ./src/azure-stream.ts"
+    "azure:stream": "ts-node-esm ./src/azure-stream.ts",
+    "build": "rollup -c ./rollup.config.js"
   },
   "keywords": [],
   "author": "",

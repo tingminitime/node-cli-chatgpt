@@ -1,9 +1,9 @@
-console.log('[OpenAI]cbot Start !')
+console.log('[OpenAI Azure]cbot Start !')
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import { input } from '@inquirer/prompts'
 import chalk from 'chalk'
-import type Message from './types/message'
+import type Message from './types/message.js'
 
 dotenv.config()
 
