@@ -26,6 +26,7 @@ export function useOpenAI() {
     const chatCompletionData = await openAI.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages,
+      temperature: 0.1,
     })
 
     const answer = chatCompletionData.data.choices[0].message?.content
@@ -38,6 +39,7 @@ export function useOpenAI() {
   }
 }
 
+// TODO
 // export function useOpenAIStream() {
 //   const createStreamChatCompletion = async (messages: Message[]) => {
 //     const chatCompletionData = await openAI.createChatCompletion(
@@ -93,6 +95,9 @@ export function useAzureOpenAI() {
     const chatCompletionData = await azureOpenAIClient.getChatCompletions(
       azureDeploymentName,
       messages,
+      {
+        temperature: 0.1,
+      },
     )
 
     const answer = chatCompletionData.choices[0].message?.content
