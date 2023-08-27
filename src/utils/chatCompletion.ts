@@ -1,35 +1,67 @@
-import { Configuration, OpenAIApi } from 'openai'
+// import { Configuration, OpenAIApi } from 'openai'
+import OpenAI from 'openai'
 import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { IncomingMessage } from 'http'
 import type Message from '@/types/message.js'
 
+type OpenAIChatCompletionsConfig = {
+  model: string
+  temperature: number
+  messages: Message[]
+  stream: boolean
+}
+
 dotenv.config()
 
-// TODO
-export const openAI = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  }),
-)
+export const openAI = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 export const azureOpenAIClient = new OpenAIClient(
   process.env.AZURE_OPENAI_API_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!),
+  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!)
 )
 
-const azureDeploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME!
-
-export function useOpenAI() {
+export function useOpenAI(
+  openAIChatCompletionsConfig: OpenAIChatCompletionsConfig
+) {
   const createChatCompletion = async (messages: Message[]) => {
-    const chatCompletionData = await openAI.createChatCompletion({
+    // const chatCompletionData = await openAI.chat.completions.create({
+    //   model: 'gpt-3.5-turbo',
+    //   messages,
+    //   temperature: 0.1
+    // })
+    const chatCompletionData = await openAI.chat.completions.create({
+      ...openAIChatCompletionsConfig,
       model: 'gpt-3.5-turbo',
       messages,
       temperature: 0.1,
+      stream: false,
     })
 
-    const answer = chatCompletionData.data.choices[0].message?.content
+    const answer = chatCompletionData.choices[0].message?.content
+
+    return answer
+  }
+
+  return {
+    createChatCompletion,
+  }
+}
+
+export function useAzureOpenAI() {
+  const createChatCompletion = async (messages: Message[]) => {
+    const chatCompletionData = await azureOpenAIClient.getChatCompletions(
+      process.env.AZURE_OPENAI_DEPLOYMENT_NAME!,
+      messages,
+      {
+        temperature: 0.1,
+      }
+    )
+
+    const answer = chatCompletionData.choices[0].message?.content
 
     return answer
   }
@@ -89,23 +121,3 @@ export function useOpenAI() {
 //     createStreamChatCompletion
 //   }
 // }
-
-export function useAzureOpenAI() {
-  const createChatCompletion = async (messages: Message[]) => {
-    const chatCompletionData = await azureOpenAIClient.getChatCompletions(
-      azureDeploymentName,
-      messages,
-      {
-        temperature: 0.1,
-      },
-    )
-
-    const answer = chatCompletionData.choices[0].message?.content
-
-    return answer
-  }
-
-  return {
-    createChatCompletion,
-  }
-}

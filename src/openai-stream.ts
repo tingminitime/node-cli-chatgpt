@@ -1,5 +1,4 @@
-console.log('[OpenAI Stream]cbot Start !')
-import { Configuration, OpenAIApi } from 'openai'
+import OpenAI from 'openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { IncomingMessage } from 'http'
@@ -8,15 +7,14 @@ import messageHandler from './utils/messageHandler.js'
 import useOraLoading from './utils/loading.js'
 
 dotenv.config()
+console.log('[OpenAI Stream]cbot Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()
 
-const openAI = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  }),
-)
+const openAI = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 const main = async function () {
   try {
@@ -30,20 +28,16 @@ const main = async function () {
     const messages = addMessage(messageHistory, 'user', userInput)
 
     /* With stream */
+    // TODO: Fix the stream
     startLoading()
-    const chatCompletion = await openAI.createChatCompletion(
-      {
-        model: 'gpt-3.5-turbo',
-        messages,
-        stream: true,
-      },
-      {
-        responseType: 'stream', // if stream is true, responseType must be stream
-      },
-    )
+    const chatCompletion = await openAI.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      stream: true,
+    })
     succeedLoading()
 
-    const stream = chatCompletion.data as unknown as IncomingMessage
+    const stream = chatCompletion as unknown as IncomingMessage
 
     let finalAnswer = ''
 

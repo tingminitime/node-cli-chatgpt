@@ -1,4 +1,3 @@
-console.log('[OpenAI Azure]cbot Start !')
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import { input } from '@inquirer/prompts'
@@ -6,13 +5,14 @@ import chalk from 'chalk'
 import type Message from './types/message.js'
 
 dotenv.config()
+console.log('[OpenAI Azure]cbot Start !')
 
 const basePath = `${process.env.AZURE_OPENAI_API_ENDPOINT}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}`
 
 const openAI = new OpenAIApi(
   new Configuration({
     basePath,
-  }),
+  })
 )
 
 const messages: Message[] = [
@@ -50,9 +50,9 @@ const main = async function () {
           'api-key': process.env.AZURE_OPENAI_API_KEY!,
         },
         params: {
-          'api-version': '2023-05-15',
+          'api-version': process.env.AZURE_OPENAI_API_VERSION,
         },
-      },
+      }
     )
 
     const answer = chatCompletion.data.choices[0].message?.content

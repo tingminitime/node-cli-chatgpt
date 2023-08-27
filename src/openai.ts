@@ -1,5 +1,3 @@
-console.log('[OpenAI]cbot Start !')
-import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { userInputHandler } from './utils/userInput.js'
@@ -8,6 +6,7 @@ import messageHandler from './utils/messageHandler.js'
 import { useOpenAI } from './utils/chatCompletion.js'
 
 dotenv.config()
+console.log('[OpenAI]cbot Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()
