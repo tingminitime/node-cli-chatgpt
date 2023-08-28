@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 import chalk from 'chalk'
+import { useOpenAI } from './utils/chatCompletion.js'
 import { userInputHandler } from './utils/userInput.js'
 import useOraLoading from './utils/loading.js'
 import messageHandler from './utils/messageHandler.js'
-import { useOpenAI } from './utils/chatCompletion.js'
 
 dotenv.config()
 console.log('[OpenAI]cbot Start !')

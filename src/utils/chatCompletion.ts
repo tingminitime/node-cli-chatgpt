@@ -7,10 +7,10 @@ import { IncomingMessage } from 'http'
 import type Message from '@/types/message.js'
 
 type OpenAIChatCompletionsConfig = {
-  model: string
-  temperature: number
-  messages: Message[]
-  stream: boolean
+  model?: string
+  temperature?: number
+  messages?: Message[]
+  stream?: boolean
 }
 
 dotenv.config()
@@ -21,18 +21,13 @@ export const openAI = new OpenAI({
 
 export const azureOpenAIClient = new OpenAIClient(
   process.env.AZURE_OPENAI_API_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!)
+  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!),
 )
 
 export function useOpenAI(
-  openAIChatCompletionsConfig: OpenAIChatCompletionsConfig
+  openAIChatCompletionsConfig?: OpenAIChatCompletionsConfig,
 ) {
   const createChatCompletion = async (messages: Message[]) => {
-    // const chatCompletionData = await openAI.chat.completions.create({
-    //   model: 'gpt-3.5-turbo',
-    //   messages,
-    //   temperature: 0.1
-    // })
     const chatCompletionData = await openAI.chat.completions.create({
       ...openAIChatCompletionsConfig,
       model: 'gpt-3.5-turbo',
@@ -58,7 +53,7 @@ export function useAzureOpenAI() {
       messages,
       {
         temperature: 0.1,
-      }
+      },
     )
 
     const answer = chatCompletionData.choices[0].message?.content

@@ -1,16 +1,20 @@
 import OpenAI from 'openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
-import { IncomingMessage } from 'http'
+import { useOpenAI } from './utils/chatCompletion.js'
 import { userInputHandler } from './utils/userInput.js'
 import messageHandler from './utils/messageHandler.js'
 import useOraLoading from './utils/loading.js'
+import type { IncomingMessage } from 'http'
 
 dotenv.config()
 console.log('[OpenAI Stream]cbot Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()
+const { createChatCompletion } = useOpenAI({
+  stream: true,
+})
 
 const openAI = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -35,6 +39,7 @@ const main = async function () {
       messages,
       stream: true,
     })
+    // const stream = await createChatCompletion(messages)
     succeedLoading()
 
     const stream = chatCompletion as unknown as IncomingMessage
@@ -42,6 +47,11 @@ const main = async function () {
     let finalAnswer = ''
 
     process.stdout.write(chalk.green.bold('AI: '))
+
+    // for await (const part of stream) {
+    //   process.stdout.write(part.choices[0]?.delta?.content || '')
+    // }
+
     stream.on('data', (chunk: Buffer) => {
       const payloads = chunk.toString().split('\n\n')
       for (const payload of payloads) {
