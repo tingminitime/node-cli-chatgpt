@@ -6,7 +6,7 @@ import useOraLoading from './utils/loading.js'
 import messageHandler from './utils/messageHandler.js'
 
 dotenv.config()
-console.log('[OpenAI]cbot Start !')
+console.log('[OpenAI] Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()

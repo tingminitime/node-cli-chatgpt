@@ -1,6 +1,4 @@
-// import { Configuration, OpenAIApi } from 'openai'
 import OpenAI from 'openai'
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { IncomingMessage } from 'http'
@@ -19,11 +17,11 @@ export const openAI = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export const azureOpenAIClient = new OpenAIClient(
-  process.env.AZURE_OPENAI_API_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!),
-)
-
+/**
+ * OpenAI chat completion
+ * @param openAIChatCompletionsConfig
+ * @returns
+ */
 export function useOpenAI(
   openAIChatCompletionsConfig?: OpenAIChatCompletionsConfig,
 ) {
@@ -35,26 +33,6 @@ export function useOpenAI(
       temperature: 0.1,
       stream: false,
     })
-
-    const answer = chatCompletionData.choices[0].message?.content
-
-    return answer
-  }
-
-  return {
-    createChatCompletion,
-  }
-}
-
-export function useAzureOpenAI() {
-  const createChatCompletion = async (messages: Message[]) => {
-    const chatCompletionData = await azureOpenAIClient.getChatCompletions(
-      process.env.AZURE_OPENAI_DEPLOYMENT_NAME!,
-      messages,
-      {
-        temperature: 0.1,
-      },
-    )
 
     const answer = chatCompletionData.choices[0].message?.content
 

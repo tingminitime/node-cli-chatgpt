@@ -8,7 +8,7 @@ import useOraLoading from './utils/loading.js'
 import type { IncomingMessage } from 'http'
 
 dotenv.config()
-console.log('[OpenAI Stream]cbot Start !')
+console.log('[OpenAI Stream] Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()
