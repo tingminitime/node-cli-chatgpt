@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 import chalk from 'chalk'
-import { useOpenAI } from './utils/chatCompletion.js'
-import { userInputHandler } from './utils/userInput.js'
-import useOraLoading from './utils/loading.js'
-import messageHandler from './utils/messageHandler.js'
+import { useOpenAI } from './utils/chatCompletion.ts'
+import { userInputHandler } from './utils/userInput.ts'
+import useOraLoading from './utils/loading.ts'
+import messageHandler from './utils/messageHandler.ts'
 
 dotenv.config()
 console.log('[OpenAI] Start !')
@@ -23,10 +23,7 @@ const main = async function () {
 
     const messages = addMessage(messageHistory, 'user', userInput)
 
-    /* Without stream */
-    startLoading()
     const answer = await createChatCompletion(messages)
-    succeedLoading()
 
     console.log(chalk.green.bold('AI: '), answer)
 

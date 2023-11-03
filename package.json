@@ -6,13 +6,9 @@
   "type": "module",
   "bin": "./dist/bundle.ts",
   "scripts": {
-    "start": "ts-node-esm ./src/index.ts",
-    "openai": "ts-node-esm ./src/openai.ts",
-    "openai-azure": "ts-node-esm ./src/openai-azure.ts",
-    "openai:stream": "ts-node-esm ./src/openai-stream.ts",
-    "openai-azure:stream": "ts-node-esm ./src/openai-azure-stream.ts",
-    "azure": "ts-node-esm ./src/azure.ts",
-    "azure:stream": "ts-node-esm ./src/azure-stream.ts",
+    "start": "tsx ./src/index.ts",
+    "openai": "tsx ./src/openai.ts",
+    "openai:stream": "tsx ./src/openai-stream.ts",
     "build": "rollup -c ./rollup.config.js"
   },
   "keywords": [],
@@ -28,7 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.10",
-    "ts-node": "^10.9.1",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }
 }

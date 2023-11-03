@@ -11,7 +11,7 @@ export async function userInputHandler(): Promise<UserInputHandler> {
     message: chalk.blue('You: '),
   })
 
-  const isInputExit = userInput === 'exit'
+  const isInputExit = userInput.toLowerCase() === 'exit'
 
   return {
     userInput,

@@ -1,14 +1,19 @@
-import type Message from '@/types/message.js'
+import type Message from '@/types/message.ts'
+import { systemPrompt } from '@/constants/index.ts'
 
-function messageHandler() {
+type MessageHandlerConfig = {
+  maxMessageHistory?: number
+}
+
+function messageHandler({ maxMessageHistory = 10 }: MessageHandlerConfig = {}) {
   /**
    * @description 初始聊天訊息
    */
   const messageHistory: Message[] = [
     {
       role: 'system',
-      content:
-        '你是一位懂中文且有用的 AI 助手，接下來是一連串的聊天問答，請你以「繁體中文」與我對話。',
+      // content: '你是一位懂中文且有用的 AI 助手，接下來是一連串的聊天問答，請你以「繁體中文」與我對話。',
+      content: systemPrompt,
     },
   ]
 
@@ -35,7 +40,7 @@ function messageHandler() {
       content,
     })
 
-    limitMessageHistory(10)
+    limitMessageHistory(maxMessageHistory)
 
     return messages
   }

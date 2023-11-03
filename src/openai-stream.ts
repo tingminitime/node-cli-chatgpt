@@ -1,23 +1,16 @@
-import OpenAI from 'openai'
 import dotenv from 'dotenv'
-import chalk from 'chalk'
-import { useOpenAI } from './utils/chatCompletion.js'
-import { userInputHandler } from './utils/userInput.js'
-import messageHandler from './utils/messageHandler.js'
-import useOraLoading from './utils/loading.js'
-import type { IncomingMessage } from 'http'
+import { useOpenAIStream } from './utils/chatCompletion.ts'
+import { userInputHandler } from './utils/userInput.ts'
+import messageHandler from './utils/messageHandler.ts'
+import useOraLoading from './utils/loading.ts'
 
 dotenv.config()
 console.log('[OpenAI Stream] Start !')
 
 const { messageHistory, addMessage } = messageHandler()
 const { startLoading, succeedLoading, failLoading } = useOraLoading()
-const { createChatCompletion } = useOpenAI({
+const { createStreamChatCompletion } = useOpenAIStream({
   stream: true,
-})
-
-const openAI = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
 })
 
 const main = async function () {
@@ -31,52 +24,11 @@ const main = async function () {
 
     const messages = addMessage(messageHistory, 'user', userInput)
 
-    /* With stream */
-    // TODO: Fix the stream
-    startLoading()
-    const chatCompletion = await openAI.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages,
-      stream: true,
-    })
-    // const stream = await createChatCompletion(messages)
-    succeedLoading()
+    const finalAnswer = await createStreamChatCompletion(messages)
 
-    const stream = chatCompletion as unknown as IncomingMessage
-
-    let finalAnswer = ''
-
-    process.stdout.write(chalk.green.bold('AI: '))
-
-    // for await (const part of stream) {
-    //   process.stdout.write(part.choices[0]?.delta?.content || '')
-    // }
-
-    stream.on('data', (chunk: Buffer) => {
-      const payloads = chunk.toString().split('\n\n')
-      for (const payload of payloads) {
-        if (payload.includes('[DONE]')) return
-        if (payload.startsWith('data:')) {
-          const data = JSON.parse(payload.replace('data: ', ''))
-          try {
-            const chunk: undefined | string = data.choices[0].delta?.content
-            process.stdout.write(chunk || '')
-            finalAnswer += chunk || ''
-          } catch (error) {
-            console.log(`Error with JSON.parse and ${payload}: `, error)
-          }
-        }
-      }
-    })
-
-    stream.on('end', () => {
-      setTimeout(() => {
-        console.log('\n[Stream done]')
-        addMessage(messages, 'assistant', finalAnswer)
-        // continue to next Q/A
-        main()
-      }, 10)
-    })
+    addMessage(messages, 'assistant', finalAnswer)
+    // continue to next Q/A
+    main()
   } catch (error) {
     failLoading()
     console.log('[main]error: ', error)

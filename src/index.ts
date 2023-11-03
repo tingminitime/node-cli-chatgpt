@@ -1,26 +1,24 @@
 import { spawn } from 'child_process'
-import { select, Separator } from '@inquirer/prompts'
+import { select } from '@inquirer/prompts'
 import chalk from 'chalk'
-
-const tsNodeEsm =
-  'node --experimental-specifier-resolution=node --experimental-modules --no-warnings --loader ts-node/esm'
+import { exitHint } from './constants/index.ts'
 
 const answer = await select({
   message: 'Select a script to run',
   choices: [
     {
       name: 'openai',
-      value: `${tsNodeEsm} ./src/openai.ts`,
+      value: `tsx ./src/openai.ts`,
       description: 'Run OpenAI API',
     },
     {
       name: 'openai:stream',
-      value: `${tsNodeEsm} ./src/openai-stream.ts`,
+      value: `tsx ./src/openai-stream.ts`,
       description: 'Run OpenAI API with stream',
     },
   ],
 })
 
-console.log(chalk.cyan.bold('You can input "exit" to exit the chat'))
+console.log(chalk.cyan.bold(exitHint))
 
 spawn(answer, { stdio: 'inherit', shell: true })

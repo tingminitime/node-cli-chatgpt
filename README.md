@@ -1,15 +1,14 @@
 # node-cli-chatgpt
 
-一個在終端機基於 ChatGPT 的問答機器人
+A chatbot based on ChatGPT in terminal
 
 > Source : [实现在终端运行的 AI 聊天机器人 ｜ ChatGPT & Nodejs](https://youtu.be/yGupa5Fq3vY)
 
-## 功能
+## Features
 
-- 支援聊天上下文
-- exit 退出聊天命令
-- 顯示 loading
-- 全域 cli
+- Support chat context
+- `exit` to quit chat
+- Show loading
 
 ## Technologies
 
@@ -23,9 +22,13 @@
 
 ## Usage
 
+Start to chat : 
+
 ```bash
 pnpm start
 ```
+
+You can input `exit` to quit chat.
 
 ## Reference
 

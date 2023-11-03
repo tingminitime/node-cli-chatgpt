@@ -7,7 +7,7 @@ import {
 } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve, join } from 'node:path'
-import Message from '@/types/message.js'
+import Message from '@/types/message.ts'
 
 const logsFolderPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
