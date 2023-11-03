@@ -48,7 +48,6 @@ export function useOpenAI(
   }
 }
 
-// TODO
 export function useOpenAIStream(
   openAIChatCompletionsConfig?: OpenAIChatCompletionsConfig,
 ) {
@@ -75,35 +74,6 @@ export function useOpenAIStream(
     process.stdout.write('\n')
 
     return finalAnswer
-
-    // const stream = chatCompletionData.data as unknown as IncomingMessage
-
-    // process.stdout.write(chalk.green.bold('AI: '))
-    // stream.on('data', (chunk: Buffer) => {
-    //   const payloads = chunk.toString().split('\n\n')
-    //   for (const payload of payloads) {
-    //     if (payload.includes('[DONE]')) return
-    //     if (payload.startsWith('data:')) {
-    //       const data = JSON.parse(payload.replace('data: ', ''))
-    //       try {
-    //         const chunk: undefined | string = data.choices[0].delta?.content
-    //         process.stdout.write(chunk || '')
-    //         finalAnswer += chunk || ''
-    //       } catch (error) {
-    //         console.log(`Error with JSON.parse and ${payload}: `, error)
-    //       }
-    //     }
-    //   }
-    // })
-
-    // stream.on('end', () => {
-    //   setTimeout(() => {
-    //     console.log('\n[Stream done]')
-    //     addMessage(messages, 'assistant', finalAnswer)
-    //     // continue to next Q/A
-    //     main()
-    //   }, 10)
-    // })
   }
 
   return {

@@ -1,14 +1,17 @@
 {
   "name": "node-cli-chatgpt",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./src/index.js",
+  "bin": "./dist/index.js",
   "type": "module",
-  "bin": "./dist/bundle.ts",
   "scripts": {
-    "start": "tsx ./src/index.ts",
-    "openai": "tsx ./src/openai.ts",
-    "openai:stream": "tsx ./src/openai-stream.ts",
+    "dev": "tsx ./src/index.ts",
+    "dev:openai": "tsx ./src/openai.ts",
+    "dev:openai:stream": "tsx ./src/openai-stream.ts",
+    "start": "node ./dist/index.js",
+    "openai": "node ./dist/openai.ts",
+    "openai:stream": "node ./dist/openai-stream.ts",
     "build": "rollup -c ./rollup.config.js"
   },
   "keywords": [],
@@ -23,7 +26,11 @@
     "ora": "^7.0.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.8.10",
+    "rollup": "^4.2.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }

@@ -22,10 +22,42 @@ A chatbot based on ChatGPT in terminal
 
 ## Usage
 
-Start to chat : 
+### Development
+
+Select mode to chat : 
+
+```bash
+pnpm dev
+```
+
+Normal chat : 
+
+```bash
+pnpm dev:openai
+```
+
+Stream chat :
+
+```bash
+pnpm dev:openai:stream
+```
+
+### Production
 
 ```bash
 pnpm start
+```
+
+Normal chat : 
+
+```bash
+pnpm openai
+```
+
+Stream chat :
+
+```bash
+pnpm openai:stream
 ```
 
 You can input `exit` to quit chat.
