@@ -1,4 +1,4 @@
-# cli-cbot
+# node-cli-chatgpt
 
 一個在終端機基於 ChatGPT 的問答機器人
 
